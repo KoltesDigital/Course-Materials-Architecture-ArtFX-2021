@@ -4,10 +4,11 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
-#include <engine/gameplay/GameplayManager.hpp>
-#include <engine/gameplay/entities/Target.hpp>
 #include <engine/input/InputManager.hpp>
 #include <engine/physics/PhysicsManager.hpp>
+#include <engine/gameplay/EntityContext.hpp>
+#include <engine/gameplay/GameplayManager.hpp>
+#include <engine/gameplay/entities/Target.hpp>
 #include <engine/Engine.hpp>
 
 namespace engine
@@ -16,12 +17,13 @@ namespace engine
 	{
 		namespace entities
 		{
-			Player::Player()
+			Player::Player(EntityContext& context)
+				: Character{ context }
 			{
-				shapeList.load("player");
+				_shapeList.load("player");
 
-				collisionGeomId = dCreateBox(physics::Manager::getInstance().getSpaceId(), gameplay::Manager::CELL_SIZE * 0.9f, gameplay::Manager::CELL_SIZE * 0.9f, 1.f);
-				dGeomSetData(collisionGeomId, this);
+				_collisionGeomId = dCreateBox(context.physicsManager.getSpaceId(), gameplay::Manager::CELL_SIZE * 0.9f, gameplay::Manager::CELL_SIZE * 0.9f, 1.f);
+				dGeomSetData(_collisionGeomId, this);
 			}
 
 			void Player::update()
@@ -30,28 +32,28 @@ namespace engine
 				auto position = getPosition();
 				float rotation = getRotation();
 
-				if (input::Manager::getInstance().isKeyJustPressed(sf::Keyboard::Left))
+				if (_context.inputManager.isKeyJustPressed(sf::Keyboard::Left))
 				{
 					_justMoved = true;
 					position.x -= gameplay::Manager::CELL_SIZE;
 					rotation = 180.f;
 				}
 
-				if (input::Manager::getInstance().isKeyJustPressed(sf::Keyboard::Right))
+				if (_context.inputManager.isKeyJustPressed(sf::Keyboard::Right))
 				{
 					_justMoved = true;
 					position.x += gameplay::Manager::CELL_SIZE;
 					rotation = 0.f;
 				}
 
-				if (input::Manager::getInstance().isKeyJustPressed(sf::Keyboard::Up))
+				if (_context.inputManager.isKeyJustPressed(sf::Keyboard::Up))
 				{
 					_justMoved = true;
 					position.y -= gameplay::Manager::CELL_SIZE;
 					rotation = -90.f;
 				}
 
-				if (input::Manager::getInstance().isKeyJustPressed(sf::Keyboard::Down))
+				if (_context.inputManager.isKeyJustPressed(sf::Keyboard::Down))
 				{
 					_justMoved = true;
 					position.y += gameplay::Manager::CELL_SIZE;
@@ -63,17 +65,17 @@ namespace engine
 					setPosition(position);
 					setRotation(rotation);
 
-					dGeomSetPosition(collisionGeomId, position.x, position.y, 0);
+					dGeomSetPosition(_collisionGeomId, position.x, position.y, 0);
 				}
 
-				auto collisions = physics::Manager::getInstance().getCollisionsWith(collisionGeomId);
+				auto collisions = _context.physicsManager.getCollisionsWith(_collisionGeomId);
 				for (auto& geomId : collisions)
 				{
 					auto entity = reinterpret_cast<Entity*>(dGeomGetData(geomId));
 					auto targetEntity = dynamic_cast<entities::Target*>(entity);
 					if (targetEntity)
 					{
-						gameplay::Manager::getInstance().loadNextMap();
+						_context.entityListener.loadNextMap();
 					}
 				}
 			}

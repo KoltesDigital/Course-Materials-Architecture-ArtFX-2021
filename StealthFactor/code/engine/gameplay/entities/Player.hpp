@@ -11,7 +11,7 @@ namespace engine
 			class Player : public Character
 			{
 			public:
-				Player();
+				Player(EntityContext& context);
 
 				void update() override;
 

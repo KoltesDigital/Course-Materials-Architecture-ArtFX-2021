@@ -7,28 +7,32 @@ namespace engine
 {
 	namespace input
 	{
-		Manager* Manager::_instance = nullptr;
-
 		bool Manager::isKeyPressed(sf::Keyboard::Key key) const
 		{
-			if (!graphics::Manager::getInstance().hasFocus())
+			if (!_active)
+			{
 				return false;
+			}
 
 			return sf::Keyboard::isKeyPressed(key);
 		}
 
 		bool Manager::isKeyJustPressed(sf::Keyboard::Key key) const
 		{
-			if (!graphics::Manager::getInstance().hasFocus())
+			if (!_active)
+			{
 				return false;
+			}
 
 			return _justPressedKeys.find(key) != std::end(_justPressedKeys);
 		}
 
 		bool Manager::isKeyJustReleased(sf::Keyboard::Key key) const
 		{
-			if (!graphics::Manager::getInstance().hasFocus())
+			if (!_active)
+			{
 				return false;
+			}
 
 			return _justReleasedKeys.find(key) != std::end(_justReleasedKeys);
 		}
@@ -49,12 +53,9 @@ namespace engine
 			_justReleasedKeys.insert(event.code);
 		}
 
-		Manager& Manager::getInstance()
+		void Manager::setActive(bool active)
 		{
-			if (!_instance)
-				_instance = new Manager();
-
-			return *_instance;
+			_active = active;
 		}
 	}
 }

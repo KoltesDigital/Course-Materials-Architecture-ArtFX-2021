@@ -13,16 +13,16 @@ namespace engine
 			class Character : public Entity
 			{
 			public:
-				Character();
+				Character(EntityContext& context);
 				virtual ~Character();
 
 				void draw() override;
 
 			protected:
-				graphics::ShapeList shapeList;
-				dGeomID collisionGeomId;
+				graphics::ShapeList _shapeList;
+				dGeomID _collisionGeomId;
 
-				bool isWalking{ false };
+				bool _isWalking{ false };
 			};
 		}
 	}

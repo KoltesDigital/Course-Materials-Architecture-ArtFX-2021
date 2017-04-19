@@ -5,6 +5,7 @@
 #include <SFML/Window/Event.hpp>
 #include <engine/input/InputManager.hpp>
 #include <engine/graphics/ShapeList.hpp>
+#include <engine/graphics/ViewProvider.hpp>
 #include <engine/gameplay/GameplayManager.hpp>
 #include <engine/Engine.hpp>
 
@@ -12,47 +13,35 @@ namespace engine
 {
 	namespace graphics
 	{
-		Manager* Manager::_instance = nullptr;
+		Manager::Manager(EventListener& eventListener, ViewProvider& viewProvider)
+			: _eventListener{ eventListener }
+			, _viewProvider{ viewProvider }
+		{
+		}
 
-		Manager::Manager()
+		bool Manager::setUp()
 		{
 			_window.create(sf::VideoMode{ (unsigned int)_WINDOW_WIDTH, (unsigned int)_WINDOW_HEIGHT }, "Stealth Factor");
 
-			_window.setVerticalSyncEnabled(true);
+			if (!_window.isOpen())
+			{
+				return false;
+			}
 
-			sf::View view(sf::Vector2f{ 0.f, 0.f }, sf::Vector2f{ (float)_WINDOW_WIDTH, (float)_WINDOW_HEIGHT });
-			_window.setView(view);
+			return true;
 		}
 
-		Manager::~Manager()
+		void Manager::tearDown()
 		{
 			_window.close();
 		}
 
 		void Manager::update()
 		{
-			input::Manager::getInstance().clear();
-
 			sf::Event event;
 			while (_window.pollEvent(event))
 			{
-				switch (event.type)
-				{
-				case sf::Event::Closed:
-					Engine::getInstance().exit();
-					break;
-
-				case sf::Event::KeyPressed:
-					input::Manager::getInstance().onKeyPressed(event.key);
-					break;
-
-				case sf::Event::KeyReleased:
-					input::Manager::getInstance().onKeyReleased(event.key);
-					break;
-
-				default:
-					break;
-				}
+				_eventListener.onEvent(event);
 			}
 		}
 
@@ -60,7 +49,7 @@ namespace engine
 		{
 			_window.clear(sf::Color::Black);
 
-			sf::View view{ gameplay::Manager::getInstance().getViewCenter(), sf::Vector2f{(float)_WINDOW_WIDTH, (float)_WINDOW_HEIGHT} };
+			sf::View view{ _viewProvider.getViewCenter(), sf::Vector2f{(float)_WINDOW_WIDTH, (float)_WINDOW_HEIGHT} };
 			_window.setView(view);
 		}
 
@@ -76,19 +65,6 @@ namespace engine
 		void Manager::display()
 		{
 			_window.display();
-		}
-
-		bool Manager::hasFocus() const
-		{
-			return _window.hasFocus();
-		}
-
-		Manager& Manager::getInstance()
-		{
-			if (!_instance)
-				_instance = new Manager();
-
-			return *_instance;
 		}
 	}
 }

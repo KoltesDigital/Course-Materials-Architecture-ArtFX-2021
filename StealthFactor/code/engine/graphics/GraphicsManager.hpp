@@ -4,15 +4,20 @@
 
 namespace engine
 {
+	class EventListener;
+
 	namespace graphics
 	{
 		class ShapeList;
+		class ViewProvider;
 
 		class Manager
 		{
 		public:
-			Manager();
-			~Manager();
+			Manager(EventListener& eventListener, ViewProvider& viewProvider);
+
+			bool setUp();
+			void tearDown();
 
 			void update();
 
@@ -20,17 +25,14 @@ namespace engine
 			void draw(const ShapeList& shapeList, const sf::Transform& transform);
 			void display();
 
-			bool hasFocus() const;
-
-			static Manager& getInstance();
-
 		private:
+			EventListener& _eventListener;
+			ViewProvider& _viewProvider;
+
 			sf::RenderWindow _window;
 
 			static const sf::Int16 _WINDOW_WIDTH = 800;
 			static const sf::Int16 _WINDOW_HEIGHT = 600;
-
-			static Manager* _instance;
 		};
 	}
 }

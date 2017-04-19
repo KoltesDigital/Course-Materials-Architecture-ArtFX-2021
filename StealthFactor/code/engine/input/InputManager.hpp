@@ -24,13 +24,13 @@ namespace engine
 			void onKeyPressed(const sf::Event::KeyEvent& event);
 			void onKeyReleased(const sf::Event::KeyEvent& event);
 
-			static Manager& getInstance();
+			void setActive(bool active);
 
 		private:
 			std::set<sf::Keyboard::Key> _justPressedKeys;
 			std::set<sf::Keyboard::Key> _justReleasedKeys;
 
-			static Manager* _instance;
+			bool _active{ true };
 		};
 	}
 }

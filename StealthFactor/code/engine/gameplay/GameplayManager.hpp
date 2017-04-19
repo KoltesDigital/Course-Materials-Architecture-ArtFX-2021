@@ -3,6 +3,9 @@
 #include <set>
 #include <string>
 #include <SFML/System/Vector2.hpp>
+#include <engine/graphics/ViewProvider.hpp>
+#include <engine/gameplay/EntityContext.hpp>
+#include <engine/gameplay/EntityListener.hpp>
 
 namespace engine
 {
@@ -15,26 +18,29 @@ namespace engine
 			class Player;
 		}
 
-		class Manager
+		class Manager : public graphics::ViewProvider, public EntityListener
 		{
 		public:
+			Manager(graphics::Manager& graphicsManager, input::Manager& inputManager, physics::Manager& physicsManager);
+
 			void update();
 			void draw();
 
-			void gameOver();
-
-			sf::Vector2f getViewCenter() const;
-
 			void loadMap(const std::string& mapName);
-			void loadNextMap();
 
-			const entities::Player& getPlayer() const;
+			// EntityListener
+			void gameOver() override;
+			void loadNextMap() override;
+			const entities::Player& getPlayer() const override;
+
+			// ViewProvider
+			sf::Vector2f getViewCenter() const override;
 
 			static const float CELL_SIZE;
 
-			static Manager& getInstance();
-
 		private:
+			EntityContext _context;
+
 			std::set<Entity*> _entities;
 			entities::Player* _playerEntity{};
 
@@ -46,8 +52,6 @@ namespace engine
 
 			bool _preventMapCompletion{ false };
 			bool _nextMapRequested{ false };
-
-			static Manager* _instance;
 		};
 	}
 }

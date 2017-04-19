@@ -16,7 +16,11 @@ namespace engine
 	namespace gameplay
 	{
 		const float Manager::CELL_SIZE = 50.f;
-		Manager* Manager::_instance = nullptr;
+
+		Manager::Manager(graphics::Manager& graphicsManager, input::Manager& inputManager, physics::Manager& physicsManager)
+			: _context{ graphicsManager, inputManager, physicsManager, *this }
+		{
+		}
 
 		void Manager::update()
 		{
@@ -39,17 +43,6 @@ namespace engine
 			{
 				entity->draw();
 			}
-		}
-
-		void Manager::gameOver()
-		{
-			std::cout << "Game over" << std::endl;
-			loadMap(_currentMapName);
-		}
-
-		sf::Vector2f Manager::getViewCenter() const
-		{
-			return sf::Vector2f{ _columns * (CELL_SIZE / 2.f), _rows * (CELL_SIZE / 2.f) };
 		}
 
 		void Manager::loadMap(const std::string& mapName)
@@ -89,7 +82,7 @@ namespace engine
 
 						std::string archetypeName = xmlElement.child_value("archetype");
 
-						auto entity = new entities::Enemy{ archetypeName };
+						auto entity = new entities::Enemy{ _context, archetypeName };
 						entity->setPosition(sf::Vector2f{ (column + 0.5f) * CELL_SIZE, (row + 0.5f) * CELL_SIZE });
 
 						_entities.insert(entity);
@@ -103,7 +96,7 @@ namespace engine
 						int column = std::stoi(xmlElement.child_value("column"));
 						assert(column >= 0 && column < _columns);
 
-						auto entity = new entities::Player{};
+						auto entity = new entities::Player{ _context };
 						entity->setPosition(sf::Vector2f{ (column + 0.5f) * CELL_SIZE, (row + 0.5f) * CELL_SIZE });
 
 						_entities.insert(entity);
@@ -118,7 +111,7 @@ namespace engine
 						int column = std::stoi(xmlElement.child_value("column"));
 						assert(column >= 0 && column < _columns);
 
-						auto entity = new entities::Target{};
+						auto entity = new entities::Target{ _context };
 						entity->setPosition(sf::Vector2f{ (column + 0.5f) * CELL_SIZE, (row + 0.5f) * CELL_SIZE });
 
 						_entities.insert(entity);
@@ -140,6 +133,12 @@ namespace engine
 			}
 		}
 
+		void Manager::gameOver()
+		{
+			std::cout << "Game over" << std::endl;
+			loadMap(_currentMapName);
+		}
+
 		void Manager::loadNextMap()
 		{
 			if (!_preventMapCompletion)
@@ -154,12 +153,9 @@ namespace engine
 			return *_playerEntity;
 		}
 
-		Manager& Manager::getInstance()
+		sf::Vector2f Manager::getViewCenter() const
 		{
-			if (!_instance)
-				_instance = new Manager();
-
-			return *_instance;
+			return sf::Vector2f{ _columns * (CELL_SIZE / 2.f), _rows * (CELL_SIZE / 2.f) };
 		}
 	}
 }
