@@ -1,4 +1,4 @@
-# Software Architecture Applied To Game Engines - ArtFX 2021
+# Software Architecture & Code Quality Applied To Game Engines - ArtFX 2021
 
 This repository contains the materials for the course on software architecture. It features a game project, whose architecture is a lighter version of industrial-grade ones.
 
@@ -40,3 +40,15 @@ Although the code should support multiple platforms, only precompiled libraries 
 2. [ODE](http://www.ode.org/), a physics engine
 3. [pugixml](http://pugixml.org/), an XML parser (header-only)
 4. [SFML](https://www.sfml-dev.org/), a small multimedia framework
+
+## Session #1
+
+- Why do we need architecture and code quality anyway?
+- Architecture principle: rely on lower level, cannot access to higher level.
+- Overview of a typical game engine architecture.
+- Dependency cycles to be avoided.
+- Singletons can facilitate architecture breaches.
+- Division of responsibilities.
+- Interfaces to break dependency cycles.
+- Dependency injection.
+- Dependency inversion.
