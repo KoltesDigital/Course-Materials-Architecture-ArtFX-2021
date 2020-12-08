@@ -52,3 +52,13 @@ Although the code should support multiple platforms, only precompiled libraries 
 - Interfaces to break dependency cycles.
 - Dependency injection.
 - Dependency inversion.
+
+## Session #2
+
+- pImpl.
+- RAII.
+- Memory ownership.
+- Smart pointers (`std::unique_ptr` / `std::shared_ptr`).
+- Move semantics.
+- `void*`: C-style pointer to user data.
+- Interface with opaque structures through handlers.
