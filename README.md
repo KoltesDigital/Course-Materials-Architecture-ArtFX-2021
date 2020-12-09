@@ -62,3 +62,12 @@ Although the code should support multiple platforms, only precompiled libraries 
 - Move semantics.
 - `void*`: C-style pointer to user data.
 - Interface with opaque structures through handlers.
+
+## Session #3
+
+- Specialization through inheritance.
+- Specialization through components, entity-component-system.
+- Camera system.
+- Separation between Model and View.
+- Visitor pattern.
+- Tests.
