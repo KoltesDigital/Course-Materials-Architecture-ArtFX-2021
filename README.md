@@ -71,3 +71,10 @@ Although the code should support multiple platforms, only precompiled libraries 
 - Separation between Model and View.
 - Visitor pattern.
 - Tests.
+
+## Session #4
+
+- Serialization.
+- Visitor pattern, again.
+- Model-View, again.
+- Command pattern, undo-redo.
